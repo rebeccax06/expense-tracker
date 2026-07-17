@@ -75,7 +75,18 @@ export async function POST(request: NextRequest) {
     console.error("commit_import failed", error);
     // Roll back the uploaded file so we don't leave orphans on failure.
     if (storagePath) await supabase.storage.from("imports").remove([storagePath]);
-    return NextResponse.json({ error: "Import failed. No changes were saved." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Import failed. No changes were saved.",
+        detail: {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        },
+      },
+      { status: 500 },
+    );
   }
 
   revalidatePath("/transactions");
