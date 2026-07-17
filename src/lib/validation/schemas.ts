@@ -122,7 +122,7 @@ export const overrideSchema = z.object({
 
 // ---- Import commit ----
 export const importCommitRowSchema = z.object({
-  rowNumber: z.number().int(),
+  row_number: z.number().int(),
   raw: z.record(z.string(), z.string()),
   fingerprint: z.string().min(1),
   transaction_date: z.string().date(),

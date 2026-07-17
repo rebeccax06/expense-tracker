@@ -122,7 +122,7 @@ export function ImportsClient({
     const rows = preview.rows
       .filter((r) => r.parsed && (!skipDuplicates || !r.duplicateInDb))
       .map((r) => ({
-        rowNumber: r.rowNumber,
+        row_number: r.rowNumber,
         raw: r.raw,
         fingerprint: r.fingerprint!,
         transaction_date: r.parsed!.transactionDate,
