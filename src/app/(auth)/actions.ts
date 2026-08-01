@@ -59,6 +59,29 @@ export async function signUp(
   return { message: "Check your email to confirm your account, then log in." };
 }
 
+export async function sendMagicLink(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid email" };
+  }
+
+  const redirectTo = String(formData.get("redirectTo") || "/dashboard");
+  const next = redirectTo.startsWith("/") ? redirectTo : "/dashboard";
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithOtp({
+    email: parsed.data.email,
+    options: {
+      emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
+  });
+  if (error) return { error: error.message };
+  return { message: "Check your email for a login link." };
+}
+
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
